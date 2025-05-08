@@ -1,0 +1,12 @@
+{
+    "name": "webpack-app",
+    "version": "1.0.0",
+    "scripts": {
+        "build": "webpack",
+        "start": "webpack && node server.js"
+    },
+    "dependencies": {
+        "webpack":"*",
+        "webpack-cli":"*"
+    }
+}
