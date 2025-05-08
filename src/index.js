@@ -33,8 +33,13 @@ const map = new Map({
 });
 
 
-//navigator.geolocation.getCurrentPosition(showPosition);
-navigator.geolocation.watchPosition(showPosition);
+navigator.geolocation.watchPosition(updatePosition);
+
+function updatePosition(position)
+{
+    showPosition(position);
+    updateTrack(position);
+}
 
 function showPosition(position)
 {
@@ -55,6 +60,24 @@ function showPosition(position)
 
     map.getView().animate({
         center: coordinates,
-        zoom: 12
+        zoom: 14
     });
+}
+
+function updateTrack(position)
+{
+    let coordinates = fromLonLat([position.coords.longitude, position.coords.latitude]);
+
+    let track = vectorSource.getFeatureById("track");
+    if(track)
+    {
+        track.getGeometry().appendCoordinate(coordinates)
+    }
+    else
+    {
+        track = new Feature({geometry: new LineString([coordinates])});
+        track.setStyle(new Style({stroke: new Stroke({color: "blue", width: 1})}));
+        track.setId("track");
+        vectorSource.addFeature(track);
+    }
 }
