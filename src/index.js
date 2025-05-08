@@ -33,15 +33,25 @@ const map = new Map({
 });
 
 
-navigator.geolocation.getCurrentPosition(showPosition);
+//navigator.geolocation.getCurrentPosition(showPosition);
+navigator.geolocation.watchPosition(showPosition);
 
 function showPosition(position)
 {
     let coordinates = fromLonLat([position.coords.longitude, position.coords.latitude]);
-    
-    let point = new Feature({geometry: new Point(coordinates)});
-    point.setStyle(new Style({image: new Circle({radius: 5, fill: new Fill({color: "blue"})})}))
-    vectorSource.addFeature(point);
+
+    let point = vectorSource.getFeatureById("currentPosition");
+    if(point)
+    {
+        point.getGeometry().setCoordinates(coordinates);
+    }
+    else
+    {   
+        point = new Feature({geometry: new Point(coordinates)});
+        point.setStyle(new Style({image: new Circle({radius: 5, fill: new Fill({color: "blue"})})}));
+        point.setId("currentPosition");
+        vectorSource.addFeature(point);
+    }
 
     map.getView().animate({
         center: coordinates,
